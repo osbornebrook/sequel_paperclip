@@ -99,15 +99,15 @@ module Sequel
               basename = attachment_generate_basename(attachment)
               send("#{name}_basename=", basename)
 
-              original_filename = File.basename(value.respond_to?(:original_filename) ? value.original_filename : value.path)
+              original_filename = File.basename(value[:filename])
 
               if respond_to?("#{name}_filename")
                 send("#{name}_filename=", basename+File.extname(original_filename).downcase)
               end
 
-              if respond_to?("#{name}_filesize")
-                send("#{name}_filesize=", value.size)
-              end
+              # if respond_to?("#{name}_filesize")
+              #   send("#{name}_filesize=", value.size)
+              # end
 
               if respond_to?("#{name}_originalname")
                 send("#{name}_originalname=", original_filename)
@@ -117,7 +117,7 @@ module Sequel
             end
 
             # now queue the real update
-            attachment.update(value)
+            attachment.update(value[:tempfile])
 
             # force sequel to call the hooks
             modified!
